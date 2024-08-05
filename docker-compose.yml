@@ -12,5 +12,25 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
 
+  plex:
+    # http://localhost:32400/web
+    container_name: plex
+    image: lscr.io/linuxserver/plex:latest
+    expose:
+      - 32400
+      - 33400
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ}
+      - VERSION=docker
+      # - PLEX_CLAIM= #optional
+    volumes:
+      - ${PLEX_LIBRARY_PATH}:/config
+      - ${PLEX_TV_PATH}:/tv
+      - ${PLEX_MOVIES_PATH}:/movies
+    network_mode: host
+    restart: unless-stopped
+
 volumes:
   data:

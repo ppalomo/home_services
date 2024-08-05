@@ -37,3 +37,9 @@ $ sudo usermod -aG docker $USER
 $ sudo apt-get install docker-compose-plugin
 $ docker compose version
 ```
+
+## Ejecutar Servicios
+
+```shell
+$ docker compose up -d
+```
