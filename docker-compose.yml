@@ -3,8 +3,8 @@ services:
 
   portainer:
     # https://localhost:9443
-    container_name: portainer
     image: portainer/portainer-ce:latest
+    container_name: portainer
     ports:
       - 9443:9443
     volumes:
@@ -14,8 +14,11 @@ services:
 
   plex:
     # http://localhost:32400/web
-    container_name: plex
     image: lscr.io/linuxserver/plex:latest
+    container_name: plex
+    ports:
+      - 32400:32400
+      - 33400:33400
     expose:
       - 32400
       - 33400
@@ -26,10 +29,83 @@ services:
       - VERSION=docker
       # - PLEX_CLAIM= #optional
     volumes:
-      - ${PLEX_LIBRARY_PATH}:/config
-      - ${PLEX_TV_PATH}:/tv
-      - ${PLEX_MOVIES_PATH}:/movies
+      - "${PLEX_LIBRARY_PATH}:/config"
+      - "${PLEX_TV_PATH}:/tv"
+      - "${PLEX_MOVIES_PATH}:/movies"
     network_mode: host
+    restart: unless-stopped
+
+  transmission:
+    # http://localhost:9091/transmission/web/
+    image: lscr.io/linuxserver/transmission:latest
+    container_name: transmission
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ}
+      # - TRANSMISSION_WEB_HOME= #optional
+      - USER=${WEB_UI_USER}
+      - PASS=${WEB_UI_PASSWD}
+      # - WHITELIST= #optional
+      # - PEERPORT= #optional
+      # - HOST_WHITELIST= #optional
+    volumes:
+      - "${TRANSMISSION_CONFIG_PATH}:/config"
+      - "${TRANSMISSION_DOWNLOADS_PATH}:/downloads"
+      - "${TRANSMISSION_WATCH_PATH}:/watch"
+    ports:
+      - 9091:9091
+      - 51413:51413
+      - 51413:51413/udp
+    restart: unless-stopped
+
+  flexget:
+    # http://localhost:5050/
+    image: lscr.io/linuxserver/flexget:latest
+    container_name: flexget
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ}
+      - FG_LOG_LEVEL=info
+      - FG_LOG_FILE=/config/flexget.log
+      - FG_CONFIG_FILE=/config/config.yml
+      - FG_WEBUI_PASSWORD=${WEB_UI_PASSWD}
+    volumes:
+      # - /path/to/flexget/data:/config
+      - ./flexget:/config
+      - "${TRANSMISSION_DOWNLOADS_PATH}:/data"
+      - "${PLEX_MOVIES_PATH}:/movies"
+    ports:
+      - 5050:5050
+    restart: unless-stopped
+
+  amule:
+    # http://localhost:4711/
+    image: ngosang/amule
+    container_name: amule
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ}
+      - GUI_PWD=${WEB_UI_PASSWD}
+      - WEBUI_PWD=${WEB_UI_PASSWD}
+      - MOD_AUTO_RESTART_ENABLED=true
+      - MOD_AUTO_RESTART_CRON=0 6 * * *
+      - MOD_AUTO_SHARE_ENABLED=false
+      - MOD_AUTO_SHARE_DIRECTORIES=/incoming;/my_movies
+      - MOD_FIX_KAD_GRAPH_ENABLED=true
+      - MOD_FIX_KAD_BOOTSTRAP_ENABLED=true
+    ports:
+      - "4711:4711" # web ui
+      - "4712:4712" # remote gui, webserver, cmd ...
+      - "4662:4662" # ed2k tcp
+      - "4665:4665/udp" # ed2k global search udp (tcp port +3)
+      - "4672:4672/udp" # ed2k udp
+    volumes:
+      - ./amule:/home/amule/.aMule
+      - "${AMULE_DOWNLOADS_PATH}:/incoming"
+      - "${AMULE_TEMP_PATH}:/temp"
     restart: unless-stopped
 
 volumes:

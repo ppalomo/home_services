@@ -1,0 +1,23 @@
+web_server: yes
+
+schedules:
+  - tasks: '*'
+    interval:
+      minutes: 1
+
+tasks:
+  move_and_rename_movies:
+    filesystem:
+      path: /data/complete/
+      regexp: '.*\.(avi|mkv|mp4)$'
+      recursive: yes
+    accept_all: yes
+    tmdb_lookup:
+      language: es
+    # imdb_lookup: yes
+    # metainfo_movie: yes
+    set:
+      content_filename: "{{ tmdb_name }} ({{ tmdb_year }})"
+    move:
+      to: '/movies/'
+      rename: "{{ tmdb_name }} ({{ tmdb_year }})"
