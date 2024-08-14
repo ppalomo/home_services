@@ -3,7 +3,7 @@ web_server: yes
 schedules:
   - tasks: '*'
     interval:
-      minutes: 1
+      minutes: 30
 
 tasks:
   move_and_rename_movies:

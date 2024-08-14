@@ -16,9 +16,9 @@ services:
     # http://localhost:32400/web
     image: lscr.io/linuxserver/plex:latest
     container_name: plex
-    ports:
-      - 32400:32400
-      - 33400:33400
+    # ports:
+    #   - 32400:32400
+    #   - 33400:33400
     expose:
       - 32400
       - 33400
@@ -108,5 +108,31 @@ services:
       - "${AMULE_TEMP_PATH}:/temp"
     restart: unless-stopped
 
+  utorrent:
+    # http://localhost:8080/gui (user:admin, no pwd)
+    image: ekho/utorrent:latest
+    container_name: utorrent
+    volumes:
+      - "${UTORRENT_SETTINGS_PATH}:/utorrent/settings"
+      - "${UTORRENT_DOWNLOADS_PATH}:/data"
+      - "${UTORRENT_WATCH_PATH}:/watch"
+    environment:
+      UID: 1000
+      GID: 1000
+      webui: ut
+      dir_autoload_delete: true
+      dir_autoload: watch
+    ports:
+      - 8080:8080
+      - 6881:6881
+      - 6881:6881/udp
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
 volumes:
   data:
+  utorrent-settings:
