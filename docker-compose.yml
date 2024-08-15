@@ -30,8 +30,11 @@ services:
       # - PLEX_CLAIM= #optional
     volumes:
       - "${PLEX_LIBRARY_PATH}:/config"
-      - "${PLEX_TV_PATH}:/tv"
-      - "${PLEX_MOVIES_PATH}:/movies"
+      - "${PLEX_LOCAL_TV_PATH}:/tv"
+      - "${PLEX_LOCAL_MOVIES_PATH}:/movies"
+      - "${PLEX_NAS_VIDEO_PATH}:/video"
+      - "${PLEX_NAS_VIDEO2_PATH}:/video2"
+      - "${PLEX_NAS_DOWNLOADS_PATH}:/downloads"
     network_mode: host
     restart: unless-stopped
 
@@ -57,27 +60,6 @@ services:
       - 9091:9091
       - 51413:51413
       - 51413:51413/udp
-    restart: unless-stopped
-
-  flexget:
-    # http://localhost:5050/
-    image: lscr.io/linuxserver/flexget:latest
-    container_name: flexget
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=${TZ}
-      - FG_LOG_LEVEL=info
-      - FG_LOG_FILE=/config/flexget.log
-      - FG_CONFIG_FILE=/config/config.yml
-      - FG_WEBUI_PASSWORD=${WEB_UI_PASSWD}
-    volumes:
-      # - /path/to/flexget/data:/config
-      - ./flexget:/config
-      - "${TRANSMISSION_DOWNLOADS_PATH}:/data"
-      - "${PLEX_MOVIES_PATH}:/movies"
-    ports:
-      - 5050:5050
     restart: unless-stopped
 
   amule:
@@ -132,6 +114,27 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+
+  flexget:
+    # http://localhost:5050/
+    image: lscr.io/linuxserver/flexget:latest
+    container_name: flexget
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ}
+      - FG_LOG_LEVEL=info
+      - FG_LOG_FILE=/config/flexget.log
+      - FG_CONFIG_FILE=/config/config.yml
+      - FG_WEBUI_PASSWORD=${WEB_UI_PASSWD}
+    volumes:
+      - ./flexget:/config
+      - "${UTORRENT_DOWNLOADS_PATH}:/utorrent_downloads"
+      - "${TRANSMISSION_DOWNLOADS_PATH}:/transmission_downloads"
+      - "${PLEX_NAS_DOWNLOADS_PATH}:/plex_downloads"
+    ports:
+      - 5050:5050
+    restart: unless-stopped
 
 volumes:
   data:

@@ -6,9 +6,9 @@ schedules:
       minutes: 30
 
 tasks:
-  move_and_rename_movies:
+  transmission_move_and_rename_movies:
     filesystem:
-      path: /data/complete/
+      path: /transmission_downloads/complete/
       regexp: '.*\.(avi|mkv|mp4)$'
       recursive: yes
     accept_all: yes
@@ -19,5 +19,21 @@ tasks:
     set:
       content_filename: "{{ tmdb_name }} ({{ tmdb_year }})"
     move:
-      to: '/movies/'
+      to: '/plex_downloads/'
+      rename: "{{ tmdb_name }} ({{ tmdb_year }})"
+
+  utorrent_move_and_rename_movies:
+    filesystem:
+      path: /utorrent_downloads/
+      regexp: '.*\.(avi|mkv|mp4)$'
+      recursive: yes
+    accept_all: yes
+    tmdb_lookup:
+      language: es
+    # imdb_lookup: yes
+    # metainfo_movie: yes
+    set:
+      content_filename: "{{ tmdb_name }} ({{ tmdb_year }})"
+    move:
+      to: '/plex_downloads/'
       rename: "{{ tmdb_name }} ({{ tmdb_year }})"

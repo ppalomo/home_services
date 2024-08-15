@@ -1,3 +1,12 @@
+# Services
+
+- **Portainer**: https://localhost:9443
+- **Plex**: http://localhost:32400/web
+- **Transmission**: http://localhost:9091/transmission/web/
+- **Amule**: http://localhost:4711/
+- **uTorrent**: http://localhost:8080/gui
+- **Flexget**: http://localhost:5050/
+
 ## Installing Docker
 
 To begin, install the dependencies required by running the following commands:
@@ -43,3 +52,7 @@ $ docker compose version
 ```shell
 $ docker compose up -d
 ```
+# /etc/fstab
+//192.168.50.2/video /mnt/house-nas/video cifs username=user,password=passwd,uid=1000,gid=1000 0 0
+//192.168.50.2/video2 /mnt/house-nas/video2 cifs username=user,password=passwd,uid=1000,gid=1000 0 0
+//192.168.50.2/downloads /mnt/house-nas/downloads cifs username=user,password=passwd,uid=1000,gid=1000 0 0
