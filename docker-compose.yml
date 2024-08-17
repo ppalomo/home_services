@@ -38,6 +38,20 @@ services:
     network_mode: host
     restart: unless-stopped
 
+  tautulli:
+    # http://???  
+    image: lscr.io/linuxserver/tautulli:latest
+    container_name: tautulli
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ}
+    volumes:
+      - "${TAUTULLI_CONFIG_PATH}:/config"
+    ports:
+      - 8181:8181
+    restart: unless-stopped
+
   transmission:
     # http://localhost:9091/transmission/web/
     image: lscr.io/linuxserver/transmission:latest
@@ -53,7 +67,7 @@ services:
       # - PEERPORT= #optional
       # - HOST_WHITELIST= #optional
     volumes:
-      - "${TRANSMISSION_CONFIG_PATH}:/config"
+      - ./transmission:/config
       - "${TRANSMISSION_DOWNLOADS_PATH}:/downloads"
       - "${TRANSMISSION_WATCH_PATH}:/watch"
     ports:
@@ -135,6 +149,18 @@ services:
     ports:
       - 5050:5050
     restart: unless-stopped
+
+  homeassistant:
+    # http://localhost:8123
+    image: "ghcr.io/home-assistant/home-assistant:stable"
+    container_name: home_assistant
+    volumes:
+      - ./home_assistant:/config
+      - /etc/localtime:/etc/localtime:ro
+      - /run/dbus:/run/dbus:ro
+    restart: unless-stopped
+    privileged: true
+    network_mode: host
 
 volumes:
   data:

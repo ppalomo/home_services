@@ -12,5 +12,11 @@ downloads/*
 .env
 flexget/*.sqlite
 flexget/.flexget
+transmission/blocklists/
+transmission/resume/
+transmission/torrents/
 transmission/dht.dat
 transmission/stats.json
+transmission/bandwidth-groups.json
+home_assistant/*
+!home_assistant/**/*.yaml

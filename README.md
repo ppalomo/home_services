@@ -6,6 +6,7 @@
 - **Amule**: http://localhost:4711/
 - **uTorrent**: http://localhost:8080/gui
 - **Flexget**: http://localhost:5050/
+- **Home Assistant**: http://localhost:8123
 
 ## Installing Docker
 
